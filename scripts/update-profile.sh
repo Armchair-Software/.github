@@ -4,7 +4,8 @@
 # and updates the projects table in profile/README.md.
 #
 # Required environment variables:
-#   GITHUB_TOKEN  – a token with read access to the organisation's repositories
+#   GITHUB_TOKEN  – a token with read:org and repo access (a PAT is required
+#                   to include private repositories and search their issues)
 #
 # Optional environment variables:
 #   ORG           – GitHub organisation name (default: Armchair-Software)
@@ -30,12 +31,12 @@ gh_api() {
     "${API}/${path}"
 }
 
-# Fetch all public, non-archived, non-fork repositories for the org
+# Fetch all non-archived, non-fork repositories for the org (public and private)
 fetch_repos() {
   local page=1
   while :; do
     local chunk
-    chunk=$(gh_api "orgs/${ORG}/repos?type=public&sort=full_name&per_page=${PER_PAGE}&page=${page}")
+    chunk=$(gh_api "orgs/${ORG}/repos?type=all&sort=full_name&per_page=${PER_PAGE}&page=${page}")
     echo "${chunk}" | jq -c '.[]'
     local count
     count=$(echo "${chunk}" | jq 'length')
@@ -46,11 +47,16 @@ fetch_repos() {
   done
 }
 
-# Return base64-encoded JSON objects for each workflow in a repo (path + name)
+# Return base64-encoded JSON objects for each *real* workflow file in a repo.
+# Synthetic GitHub-managed workflows (Copilot, Dependabot, etc.) are excluded
+# because they have no corresponding file path in .github/workflows/ and their
+# badge/action URLs do not resolve correctly.
+# The regex matches only top-level .yml/.yaml files directly inside .github/workflows/
+# and deliberately excludes subdirectories (which would contain a second slash).
 get_workflows() {
   local repo="$1"
   gh_api "repos/${ORG}/${repo}/actions/workflows?per_page=${PER_PAGE}" 2>/dev/null \
-    | jq -r '.workflows[] | @base64' 2>/dev/null || true
+    | jq -r '.workflows[] | select(.path | test("^\\.github/workflows/[^/]+\\.ya?ml$")) | @base64' 2>/dev/null || true
 }
 
 # Return the html_url of the GitHub Pages site for a repo, or empty string
@@ -72,29 +78,60 @@ get_pages_url() {
   rm -f "${body_file}"
 }
 
+# Return the total count of issues or PRs matching the given search query.
+# Uses the GitHub search API which supports filtering by type:issue / type:pr.
+# Usage: search_count REPO TYPE STATE
+#   TYPE:  issue | pr
+#   STATE: open | closed | "" (all states)
+search_count() {
+  local repo="$1"
+  local type="$2"
+  local state="$3"
+  local q="repo:${ORG}/${repo} type:${type}"
+  [ -n "${state}" ] && q+=" state:${state}"
+  local encoded_q
+  encoded_q=$(python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${q}")
+  local result
+  result=$(gh_api "search/issues?q=${encoded_q}&per_page=1" 2>/dev/null) || true
+  echo "${result}" | jq '.total_count // 0' 2>/dev/null || echo "0"
+}
+
 # ---------------------------------------------------------------------------
 # Build the projects table
 # ---------------------------------------------------------------------------
 
 build_table() {
   local table=""
-  table+="| Project | Description | Build Status | Pages |\n"
-  table+="| ------- | ----------- | :----------: | :---: |\n"
+  table+="| Project | Description | Build Status | Issues | PRs | Stars | Forks | Pages |\n"
+  table+="| ------- | ----------- | :----------: | :----: | :-: | :---: | :---: | :---: |\n"
 
   local repos_json
   mapfile -t repos_json < <(fetch_repos)
 
   for repo_json in "${repos_json[@]}"; do
-    local name fork archived description has_pages
+    local name fork archived private description has_pages stars forks
     name=$(echo "${repo_json}" | jq -r '.name')
     fork=$(echo "${repo_json}" | jq -r '.fork')
     archived=$(echo "${repo_json}" | jq -r '.archived')
+    private=$(echo "${repo_json}" | jq -r '.private')
     description=$(echo "${repo_json}" | jq -r '.description // ""')
     has_pages=$(echo "${repo_json}" | jq -r '.has_pages')
+    stars=$(echo "${repo_json}" | jq -r '.stargazers_count // 0')
+    forks=$(echo "${repo_json}" | jq -r '.forks_count // 0')
 
     # Skip the .github repo itself and any forks / archived repos
     if [ "${name}" = ".github" ] || [ "${fork}" = "true" ] || [ "${archived}" = "true" ]; then
       continue
+    fi
+
+    # ---- Description (sanitized for Markdown table) -------------------------
+    local desc_col
+    if [ "${private}" = "true" ]; then
+      desc_col="*[Private]*"
+    else
+      # Replace newlines with spaces and escape pipe characters
+      desc_col=$(printf '%s' "${description}" | tr '\n\r' '  ' | sed 's/|/\\|/g')
+      [ -z "${desc_col}" ] && desc_col="—"
     fi
 
     # ---- Build status badges ------------------------------------------------
@@ -125,25 +162,28 @@ build_table() {
     badges="${badges% }"  # trim trailing space
     [ -z "${badges}" ] && badges="—"
 
+    # ---- Issue and PR counts ------------------------------------------------
+    local open_issues total_issues open_prs total_prs
+    open_issues=$(search_count "${name}" "issue" "open")
+    total_issues=$(search_count "${name}" "issue" "")
+    open_prs=$(search_count "${name}" "pr" "open")
+    total_prs=$(search_count "${name}" "pr" "")
+    local issues_col="${open_issues} / ${total_issues}"
+    local prs_col="${open_prs} / ${total_prs}"
+
     # ---- GitHub Pages -------------------------------------------------------
     local pages_col="—"
     if [ "${has_pages}" = "true" ]; then
       local pages_url
       pages_url=$(get_pages_url "${name}")
       if [ -n "${pages_url}" ]; then
-        pages_col="[🌐 Live demo](${pages_url})"
+        pages_col="[🌐](${pages_url})"
       fi
     fi
 
-    # ---- Description (sanitized for Markdown table) -------------------------
-    # Replace newlines with spaces and escape pipe characters
-    local desc_col
-    desc_col=$(printf '%s' "${description}" | tr '\n\r' '  ' | sed 's/|/\\|/g')
-    [ -z "${desc_col}" ] && desc_col="—"
-
     # ---- Assemble row -------------------------------------------------------
     local project_link="[**\`${name}\`**](https://github.com/${ORG}/${name})"
-    table+="| ${project_link} | ${desc_col} | ${badges} | ${pages_col} |\n"
+    table+="| ${project_link} | ${desc_col} | ${badges} | ${issues_col} | ${prs_col} | ${stars} | ${forks} | ${pages_col} |\n"
   done
 
   printf '%b' "${table}"
