@@ -61,10 +61,13 @@ gh_api() {
 gh_graphql() {
   local query="$1"
   local variables="${2:-{}}"
+  # Use GRAPHQL_TOKEN when available so that GraphQL queries (issues, PRs) are
+  # not blocked by a PAT that was granted only metadata/repo-listing access.
+  local token="${GRAPHQL_TOKEN:-${GITHUB_TOKEN}}"
   local payload
   payload=$(jq -n --arg q "${query}" --argjson v "${variables}" '{"query": $q, "variables": $v}')
   curl -fsSL \
-    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+    -H "Authorization: Bearer ${token}" \
     -H "Content-Type: application/json" \
     "${API}/graphql" \
     --data "${payload}"

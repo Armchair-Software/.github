@@ -33,6 +33,9 @@ jobs:
       - name: Generate README preview
         env:
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
+          # Use the auto-generated token for GraphQL queries (issue/PR counts)
+          # so a metadata-only PAT doesn't block those reads.
+          GRAPHQL_TOKEN: ${{ github.token }}
           # Include private repositories when the dedicated metadata token is
           # configured. If no token with private-repo access is supplied the
           # GitHub API will only return public repositories regardless, so the
