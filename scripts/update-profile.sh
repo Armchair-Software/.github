@@ -40,10 +40,10 @@ REPO_TYPE="public"
 # Column visibility (non-empty = show)
 SHOW_STARS="${SHOW_STARS:-}"
 SHOW_FORKS="${SHOW_FORKS:-}"
-SHOW_ISSUES="${SHOW_ISSUES:-1}"
-SHOW_PRS="${SHOW_PRS:-1}"
+SHOW_ISSUES="${SHOW_ISSUES-1}"
+SHOW_PRS="${SHOW_PRS-1}"
 # Issue/PR display mode: simplified (default) or full open/total
-ISSUES_SIMPLIFIED="${ISSUES_SIMPLIFIED:-1}"
+ISSUES_SIMPLIFIED="${ISSUES_SIMPLIFIED-1}"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -162,7 +162,7 @@ build_table() {
   local header="| Project | Description | Build Status |"
   local sep="| ------- | ----------- | :----------: |"
   [ -n "${SHOW_ISSUES}" ] && header+=" Issues |" && sep+=" :----: |"
-  [ -n "${SHOW_PRS}" ]    && header+=" PRs |"    && sep+=" :-: |"
+  [ -n "${SHOW_PRS}" ]    && header+=" PRs |"    && sep+=" :---: |"
   [ -n "${SHOW_STARS}" ]  && header+=" Stars |"  && sep+=" :---: |"
   [ -n "${SHOW_FORKS}" ]  && header+=" Forks |"  && sep+=" :---: |"
   header+=" Pages |"
