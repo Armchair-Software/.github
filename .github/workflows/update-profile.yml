@@ -45,5 +45,6 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "chore: auto-update profile README [skip ci]"
+            git pull --rebase origin master
             git push
           fi

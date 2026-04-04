@@ -101,6 +101,9 @@ build_table() {
     local badges=""
     local default_branch
     default_branch=$(echo "${repo_json}" | jq -r '.default_branch')
+    # URL-encode the branch name once per repo so special characters don't break badge URLs
+    local encoded_branch
+    encoded_branch=$(python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${default_branch}")
 
     while IFS= read -r workflow_json_b64; do
       [ -z "${workflow_json_b64}" ] && continue
@@ -114,9 +117,6 @@ build_table() {
       workflow_name_md="${workflow_name_md//|/\\|}"
       [ -z "${workflow_path}" ] && continue
       workflow_file=$(basename "${workflow_path}")
-      # URL-encode the branch name so special characters don't break the badge URL
-      local encoded_branch
-      encoded_branch=$(python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${default_branch}")
       local badge_url="https://github.com/${ORG}/${name}/actions/workflows/${workflow_file}/badge.svg?branch=${encoded_branch}"
       local workflow_url="https://github.com/${ORG}/${name}/actions/workflows/${workflow_file}"
       badges+="[![${workflow_name_md}](${badge_url})](${workflow_url}) "
@@ -158,6 +158,8 @@ update_readme() {
   local table_file
   table_file=$(mktemp)
   chmod 600 "${table_file}"
+  # Ensure the temp file is removed on function exit (normal or error)
+  trap 'rm -f "${table_file}"' RETURN
   printf '%s' "${table}" > "${table_file}"
 
   python3 - "${README}" "${table_file}" << 'PYEOF'
@@ -202,10 +204,6 @@ with open(readme_path, 'w') as f:
 
 print(f"Updated {readme_path}")
 PYEOF
-
-  local py_exit=$?
-  rm -f "${table_file}"
-  return "${py_exit}"
 }
 
 # ---------------------------------------------------------------------------
