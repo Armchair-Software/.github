@@ -13,8 +13,8 @@
 # Optional environment variables:
 #   ORG             – GitHub organisation name (default: Armchair-Software)
 #   README          – path to the README to update (default: profile/README.md)
-#   INCLUDE_PRIVATE – set to any non-empty value to include private repositories
-#                     in the table (requires a token with private repo access)
+#   INCLUDE_PRIVATE – set to `1` to include private repositories in the table
+#                     (requires a token with private repo access)
 #
 # Column-visibility switches (set to any non-empty value to enable, leave unset/empty to disable):
 #   SHOW_STARS      – show the Stars column (default: off)
@@ -35,7 +35,7 @@ API="https://api.github.com"
 PER_PAGE=100
 INCLUDE_PRIVATE="${INCLUDE_PRIVATE:-}"
 REPO_TYPE="public"
-[ -n "${INCLUDE_PRIVATE}" ] && REPO_TYPE="all"
+[ "${INCLUDE_PRIVATE}" = "1" ] && REPO_TYPE="all"
 
 # Column visibility (non-empty = show)
 SHOW_STARS="${SHOW_STARS:-}"
