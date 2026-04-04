@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Run update script
         env:
@@ -39,7 +39,7 @@ jobs:
           # Do not use a broad classic PAT with `repo` scope.
           # Fall back to GITHUB_TOKEN for public-only access.
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          INCLUDE_PRIVATE: "1"
+          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
         run: bash scripts/update-profile.sh
 
       - name: Commit updated README

@@ -27,12 +27,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Generate README preview
         env:
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          INCLUDE_PRIVATE: "1"
+          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
         run: bash scripts/update-profile.sh
 
       - name: Write step summary and capture table

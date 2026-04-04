@@ -16,7 +16,7 @@
 #   INCLUDE_PRIVATE – set to any non-empty value to include private repositories
 #                     in the table (requires a token with private repo access)
 #
-# Column-visibility switches (set to "1" to enable, leave unset/empty to disable):
+# Column-visibility switches (set to any non-empty value to enable, leave unset/empty to disable):
 #   SHOW_STARS      – show the Stars column (default: off)
 #   SHOW_FORKS      – show the Forks column (default: off)
 #   SHOW_ISSUES     – show the Issues column (default: on)
@@ -60,7 +60,7 @@ gh_api() {
 
 gh_graphql() {
   local query="$1"
-  local variables="${2:-{\}}"
+  local variables="${2:-{}}"
   local payload
   payload=$(jq -n --arg q "${query}" --argjson v "${variables}" '{"query": $q, "variables": $v}')
   curl -fsSL \
