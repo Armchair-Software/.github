@@ -1,0 +1,115 @@
+name: Preview Profile README
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'profile/README.md'
+      - 'scripts/update-profile.sh'
+      - '.github/workflows/update-profile.yml'
+      - '.github/workflows/preview-profile.yml'
+
+permissions:
+  contents: read
+  actions: read
+  pages: read
+  issues: write
+
+concurrency:
+  group: preview-profile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview-profile:
+    name: Preview projects dashboard
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate README preview
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
+          # Only include private repositories when the INCLUDE_PRIVATE_REPOS
+          # repository variable is explicitly set to '1' AND the dedicated
+          # metadata token is configured. This decouples token availability
+          # from private-repo inclusion to prevent accidentally publishing
+          # private repository names in a public profile README.
+          INCLUDE_PRIVATE: ${{ vars.INCLUDE_PRIVATE_REPOS == '1' && secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
+        run: bash scripts/update-profile.sh
+
+      - name: Write step summary and capture table
+        id: table
+        run: |
+          python3 << 'PYEOF'
+          import os, re
+
+          with open('profile/README.md') as f:
+              content = f.read()
+
+          m = re.search(
+              r'<!-- PROJECTS-START -->\n(.*?)<!-- PROJECTS-END -->',
+              content,
+              re.DOTALL,
+          )
+          table = m.group(1).strip() if m else '_Could not extract table from generated README._'
+
+          # Write rendered Markdown to the step summary
+          step_summary = os.environ['GITHUB_STEP_SUMMARY']
+          with open(step_summary, 'a') as f:
+              f.write('## \U0001f50d Profile README Preview\n\n')
+              f.write('_Generated from this PR\u2019s version of the script \u2014 not yet committed._\n\n')
+              f.write(table + '\n')
+
+          # Save table to GITHUB_OUTPUT using the heredoc delimiter syntax
+          github_output = os.environ['GITHUB_OUTPUT']
+          with open(github_output, 'a') as f:
+              f.write('table<<TABLEEOF\n')
+              f.write(table + '\n')
+              f.write('TABLEEOF\n')
+          PYEOF
+
+      - name: Post or update PR comment
+        if: github.event.pull_request.head.repo.fork == false
+        uses: actions/github-script@v8
+        env:
+          TABLE: ${{ steps.table.outputs.table }}
+        with:
+          script: |
+            const marker = '<!-- profile-readme-preview -->';
+            const table = process.env.TABLE;
+            const body = [
+              marker,
+              '## \uD83D\uDD0D Profile README Preview',
+              '',
+              '_Generated from this PR\u2019s version of the script \u2014 not yet committed._',
+              '',
+              table,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              core.info(`Updated existing preview comment (id ${existing.id})`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              core.info('Created new preview comment');
+            }
