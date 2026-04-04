@@ -224,7 +224,6 @@ build_table() {
     done < <(get_workflows "${name}")
 
     badges="${badges% }"  # trim trailing space
-    [ -z "${badges}" ] && badges="—"
 
     # ---- Issue and PR counts ------------------------------------------------
     local base_url="https://github.com/${ORG}/${name}"
