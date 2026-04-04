@@ -1,7 +1,3 @@
-# Armchair Software
-
-## Projects
-
 <!-- PROJECTS-START -->
 | Project | Description | Build Status | Issues | PRs | Pages |
 | ------- | ----------- | :----------: | :----: | :-: | :---: |
