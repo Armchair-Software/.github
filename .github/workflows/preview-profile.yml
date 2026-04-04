@@ -32,7 +32,12 @@ jobs:
       - name: Generate README preview
         env:
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
+          # Only include private repositories when the INCLUDE_PRIVATE_REPOS
+          # repository variable is explicitly set to '1' AND the dedicated
+          # metadata token is configured. This decouples token availability
+          # from private-repo inclusion to prevent accidentally publishing
+          # private repository names in a public profile README.
+          INCLUDE_PRIVATE: ${{ vars.INCLUDE_PRIVATE_REPOS == '1' && secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
         run: bash scripts/update-profile.sh
 
       - name: Write step summary and capture table
@@ -67,6 +72,7 @@ jobs:
           PYEOF
 
       - name: Post or update PR comment
+        if: github.event.pull_request.head.repo.fork == false
         uses: actions/github-script@v8
         env:
           TABLE: ${{ steps.table.outputs.table }}
