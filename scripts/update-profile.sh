@@ -15,6 +15,17 @@
 #   README          – path to the README to update (default: profile/README.md)
 #   INCLUDE_PRIVATE – set to any non-empty value to include private repositories
 #                     in the table (requires a token with private repo access)
+#
+# Column-visibility switches (set to "1" to enable, leave unset/empty to disable):
+#   SHOW_STARS      – show the Stars column (default: off)
+#   SHOW_FORKS      – show the Forks column (default: off)
+#   SHOW_ISSUES     – show the Issues column (default: on)
+#   SHOW_PRS        – show the PRs column (default: on)
+#
+# Issue/PR display mode:
+#   ISSUES_SIMPLIFIED – set to any non-empty value (default) to use simplified
+#                       mode: shows open count only when > 0, blank otherwise.
+#                       Leave empty to show "open / total" linked counts.
 
 set -euo pipefail
 
@@ -25,6 +36,14 @@ PER_PAGE=100
 INCLUDE_PRIVATE="${INCLUDE_PRIVATE:-}"
 REPO_TYPE="public"
 [ -n "${INCLUDE_PRIVATE}" ] && REPO_TYPE="all"
+
+# Column visibility (non-empty = show)
+SHOW_STARS="${SHOW_STARS:-}"
+SHOW_FORKS="${SHOW_FORKS:-}"
+SHOW_ISSUES="${SHOW_ISSUES:-1}"
+SHOW_PRS="${SHOW_PRS:-1}"
+# Issue/PR display mode: simplified (default) or full open/total
+ISSUES_SIMPLIFIED="${ISSUES_SIMPLIFIED:-1}"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -139,8 +158,16 @@ get_counts() {
 
 build_table() {
   local table=""
-  table+="| Project | Description | Build Status | Issues | PRs | Stars | Forks | Pages |\n"
-  table+="| ------- | ----------- | :----------: | :----: | :-: | :---: | :---: | :---: |\n"
+  # Build header row dynamically based on enabled columns
+  local header="| Project | Description | Build Status |"
+  local sep="| ------- | ----------- | :----------: |"
+  [ -n "${SHOW_ISSUES}" ] && header+=" Issues |" && sep+=" :----: |"
+  [ -n "${SHOW_PRS}" ]    && header+=" PRs |"    && sep+=" :-: |"
+  [ -n "${SHOW_STARS}" ]  && header+=" Stars |"  && sep+=" :---: |"
+  [ -n "${SHOW_FORKS}" ]  && header+=" Forks |"  && sep+=" :---: |"
+  header+=" Pages |"
+  sep+=" :---: |"
+  table+="${header}\n${sep}\n"
 
   local repos_json
   mapfile -t repos_json < <(fetch_repos)
@@ -200,24 +227,43 @@ build_table() {
     [ -z "${badges}" ] && badges="—"
 
     # ---- Issue and PR counts ------------------------------------------------
-    local counts open_issues total_issues open_prs total_prs
-    counts=$(get_counts "${name}")
-    read -r open_issues total_issues open_prs total_prs <<< "${counts}"
     local base_url="https://github.com/${ORG}/${name}"
-    local issues_col prs_col
-    if [ "${open_issues}" = "—" ]; then
-      issues_col="— / —"
-    else
-      issues_col="[${open_issues}](${base_url}/issues?q=is%3Aissue+is%3Aopen) / [${total_issues}](${base_url}/issues?q=is%3Aissue)"
-    fi
-    if [ "${open_prs}" = "—" ]; then
-      prs_col="— / —"
-    else
-      prs_col="[${open_prs}](${base_url}/pulls?q=is%3Apr+is%3Aopen) / [${total_prs}](${base_url}/pulls?q=is%3Apr)"
+    local counts open_issues total_issues open_prs total_prs
+    local issues_col="" prs_col=""
+    if [ -n "${SHOW_ISSUES}" ] || [ -n "${SHOW_PRS}" ]; then
+      counts=$(get_counts "${name}")
+      read -r open_issues total_issues open_prs total_prs <<< "${counts}"
+      if [ -n "${SHOW_ISSUES}" ]; then
+        if [ "${open_issues}" = "—" ]; then
+          issues_col="—"
+        elif [ -n "${ISSUES_SIMPLIFIED}" ]; then
+          # Simplified: show linked open count only when > 0, blank otherwise
+          if [ "${open_issues}" -gt 0 ] 2>/dev/null; then
+            issues_col="[${open_issues}](${base_url}/issues?q=is%3Aissue+is%3Aopen)"
+          else
+            issues_col=""
+          fi
+        else
+          issues_col="[${open_issues}](${base_url}/issues?q=is%3Aissue+is%3Aopen) / [${total_issues}](${base_url}/issues?q=is%3Aissue)"
+        fi
+      fi
+      if [ -n "${SHOW_PRS}" ]; then
+        if [ "${open_prs}" = "—" ]; then
+          prs_col="—"
+        elif [ -n "${ISSUES_SIMPLIFIED}" ]; then
+          if [ "${open_prs}" -gt 0 ] 2>/dev/null; then
+            prs_col="[${open_prs}](${base_url}/pulls?q=is%3Apr+is%3Aopen)"
+          else
+            prs_col=""
+          fi
+        else
+          prs_col="[${open_prs}](${base_url}/pulls?q=is%3Apr+is%3Aopen) / [${total_prs}](${base_url}/pulls?q=is%3Apr)"
+        fi
+      fi
     fi
 
     # ---- GitHub Pages -------------------------------------------------------
-    local pages_col="—"
+    local pages_col=""
     if [ "${has_pages}" = "true" ]; then
       local pages_url
       pages_url=$(get_pages_url "${name}")
@@ -228,9 +274,19 @@ build_table() {
 
     # ---- Assemble row -------------------------------------------------------
     local project_link="[**\`${name}\`**](${base_url})"
-    local stars_col="[${stars}](${base_url}/stargazers)"
-    local forks_col="[${forks}](${base_url}/network/members)"
-    table+="| ${project_link} | ${desc_col} | ${badges} | ${issues_col} | ${prs_col} | ${stars_col} | ${forks_col} | ${pages_col} |\n"
+    local row="| ${project_link} | ${desc_col} | ${badges} |"
+    [ -n "${SHOW_ISSUES}" ] && row+=" ${issues_col} |"
+    [ -n "${SHOW_PRS}" ]    && row+=" ${prs_col} |"
+    if [ -n "${SHOW_STARS}" ]; then
+      local stars_col="[${stars}](${base_url}/stargazers)"
+      row+=" ${stars_col} |"
+    fi
+    if [ -n "${SHOW_FORKS}" ]; then
+      local forks_col="[${forks}](${base_url}/network/members)"
+      row+=" ${forks_col} |"
+    fi
+    row+=" ${pages_col} |"
+    table+="${row}\n"
   done
 
   printf '%b' "${table}"
