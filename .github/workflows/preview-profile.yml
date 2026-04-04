@@ -31,7 +31,8 @@ jobs:
 
       - name: Generate README preview
         env:
-          GITHUB_TOKEN: ${{ secrets.ORG_READ_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
+          INCLUDE_PRIVATE: "1"
         run: bash scripts/update-profile.sh
 
       - name: Write step summary and capture table
