@@ -104,15 +104,22 @@ build_table() {
 
     while IFS= read -r workflow_json_b64; do
       [ -z "${workflow_json_b64}" ] && continue
-      local workflow_json workflow_path workflow_name workflow_file
+      local workflow_json workflow_path workflow_name workflow_name_md workflow_file
       workflow_json=$(printf '%s' "${workflow_json_b64}" | base64 --decode)
       workflow_path=$(echo "${workflow_json}" | jq -r '.path // empty')
       workflow_name=$(echo "${workflow_json}" | jq -r '.name // "CI"')
+      # Escape characters that would break Markdown alt text or table cells
+      workflow_name_md="${workflow_name//\\/\\\\}"
+      workflow_name_md="${workflow_name_md//]/\\]}"
+      workflow_name_md="${workflow_name_md//|/\\|}"
       [ -z "${workflow_path}" ] && continue
       workflow_file=$(basename "${workflow_path}")
-      local badge_url="https://github.com/${ORG}/${name}/actions/workflows/${workflow_file}/badge.svg?branch=${default_branch}"
+      # URL-encode the branch name so special characters don't break the badge URL
+      local encoded_branch
+      encoded_branch=$(python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${default_branch}")
+      local badge_url="https://github.com/${ORG}/${name}/actions/workflows/${workflow_file}/badge.svg?branch=${encoded_branch}"
       local workflow_url="https://github.com/${ORG}/${name}/actions/workflows/${workflow_file}"
-      badges+="[![${workflow_name}](${badge_url})](${workflow_url}) "
+      badges+="[![${workflow_name_md}](${badge_url})](${workflow_url}) "
     done < <(get_workflows "${name}")
 
     badges="${badges% }"  # trim trailing space
@@ -178,11 +185,16 @@ updated, count = re.subn(
     flags=re.DOTALL,
 )
 
-if count == 0:
-    print(
-        f"ERROR: markers <!-- PROJECTS-START --> / <!-- PROJECTS-END --> not found in {readme_path}",
-        file=sys.stderr,
-    )
+if count != 1:
+    if count == 0:
+        error = (
+            f"ERROR: markers <!-- PROJECTS-START --> / <!-- PROJECTS-END --> not found in {readme_path}"
+        )
+    else:
+        error = (
+            f"ERROR: expected exactly one <!-- PROJECTS-START --> / <!-- PROJECTS-END --> block in {readme_path}, found {count}"
+        )
+    print(error, file=sys.stderr)
     sys.exit(1)
 
 with open(readme_path, 'w') as f:
