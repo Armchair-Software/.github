@@ -33,10 +33,12 @@ jobs:
 
       - name: Run update script
         env:
-          # A PAT with read:org and repo scopes is required to list private
-          # repositories and search their issues/pull requests.
+          # Provide a dedicated fine-grained read-only token (or GitHub App
+          # installation token) limited to the specific repositories needed
+          # by this workflow to list repositories and query their metadata.
+          # Do not use a broad classic PAT with `repo` scope.
           # Fall back to GITHUB_TOKEN for public-only access.
-          GITHUB_TOKEN: ${{ secrets.ORG_READ_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
         run: bash scripts/update-profile.sh
 
       - name: Commit updated README

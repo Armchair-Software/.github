@@ -4,12 +4,17 @@
 # and updates the projects table in profile/README.md.
 #
 # Required environment variables:
-#   GITHUB_TOKEN  – a token with read:org and repo access (a PAT is required
-#                   to include private repositories and search their issues)
+#   GITHUB_TOKEN  – a read-only token for accessing the GitHub API.
+#                   For public-only access the default GITHUB_TOKEN is sufficient.
+#                   To include private repositories, supply a fine-grained
+#                   read-only PAT (or GitHub App installation token) via the
+#                   PROFILE_METADATA_READ_TOKEN secret (see update-profile.yml).
 #
 # Optional environment variables:
-#   ORG           – GitHub organisation name (default: Armchair-Software)
-#   README        – path to the README to update (default: profile/README.md)
+#   ORG             – GitHub organisation name (default: Armchair-Software)
+#   README          – path to the README to update (default: profile/README.md)
+#   INCLUDE_PRIVATE – set to any non-empty value to include private repositories
+#                     in the table (requires a token with private repo access)
 
 set -euo pipefail
 
@@ -17,6 +22,9 @@ ORG="${ORG:-Armchair-Software}"
 README="${README:-profile/README.md}"
 API="https://api.github.com"
 PER_PAGE=100
+INCLUDE_PRIVATE="${INCLUDE_PRIVATE:-}"
+REPO_TYPE="public"
+[ -n "${INCLUDE_PRIVATE}" ] && REPO_TYPE="all"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -31,12 +39,22 @@ gh_api() {
     "${API}/${path}"
 }
 
-# Fetch all non-archived, non-fork repositories for the org (public and private)
+gh_graphql() {
+  local query="$1"
+  curl -fsSL \
+    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+    -H "Content-Type: application/json" \
+    "${API}/graphql" \
+    --data-raw "$(jq -n --arg q "${query}" '{"query": $q}')"
+}
+
+# Fetch non-archived, non-fork repositories for the org.
+# Fetches public repos by default; set INCLUDE_PRIVATE=1 to include private ones.
 fetch_repos() {
   local page=1
   while :; do
     local chunk
-    chunk=$(gh_api "orgs/${ORG}/repos?type=all&sort=full_name&per_page=${PER_PAGE}&page=${page}")
+    chunk=$(gh_api "orgs/${ORG}/repos?type=${REPO_TYPE}&sort=full_name&per_page=${PER_PAGE}&page=${page}")
     echo "${chunk}" | jq -c '.[]'
     local count
     count=$(echo "${chunk}" | jq 'length')
@@ -56,7 +74,7 @@ fetch_repos() {
 get_workflows() {
   local repo="$1"
   gh_api "repos/${ORG}/${repo}/actions/workflows?per_page=${PER_PAGE}" 2>/dev/null \
-    | jq -r '.workflows[] | select(.path | test("^\\.github/workflows/[^/]+\\.ya?ml$")) | @base64' 2>/dev/null || true
+    | jq -r '.workflows[] | select((.path // "") | test("^\\.github/workflows/[^/]+\\.ya?ml$")) | @base64' 2>/dev/null || true
 }
 
 # Return the html_url of the GitHub Pages site for a repo, or empty string
@@ -78,22 +96,29 @@ get_pages_url() {
   rm -f "${body_file}"
 }
 
-# Return the total count of issues or PRs matching the given search query.
-# Uses the GitHub search API which supports filtering by type:issue / type:pr.
-# Usage: search_count REPO TYPE STATE
-#   TYPE:  issue | pr
-#   STATE: open | closed | "" (all states)
-search_count() {
+# Return space-separated "open_issues total_issues open_prs total_prs" for a
+# repo using a single GraphQL request, avoiding the much tighter Search-API
+# rate limits.  On failure each field falls back to "—".
+get_counts() {
   local repo="$1"
-  local type="$2"
-  local state="$3"
-  local q="repo:${ORG}/${repo} type:${type}"
-  [ -n "${state}" ] && q+=" state:${state}"
-  local encoded_q
-  encoded_q=$(python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${q}")
+  local query
+  query=$(printf '{ repository(owner: "%s", name: "%s") { openIssues: issues(states: OPEN) { totalCount } allIssues: issues(states: [OPEN, CLOSED]) { totalCount } openPRs: pullRequests(states: OPEN) { totalCount } allPRs: pullRequests(states: [OPEN, CLOSED, MERGED]) { totalCount } } }' "${ORG}" "${repo}")
   local result
-  result=$(gh_api "search/issues?q=${encoded_q}&per_page=1" 2>/dev/null) || true
-  echo "${result}" | jq '.total_count // 0' 2>/dev/null || echo "0"
+  if ! result=$(gh_graphql "${query}" 2>/dev/null); then
+    echo "Warning: failed to fetch counts for ${ORG}/${repo}" >&2
+    echo "— — — —"
+    return
+  fi
+  local open_issues total_issues open_prs total_prs
+  if ! open_issues=$(echo "${result}" | jq -er '.data.repository.openIssues.totalCount') \
+      || ! total_issues=$(echo "${result}" | jq -er '.data.repository.allIssues.totalCount') \
+      || ! open_prs=$(echo "${result}" | jq -er '.data.repository.openPRs.totalCount') \
+      || ! total_prs=$(echo "${result}" | jq -er '.data.repository.allPRs.totalCount'); then
+    echo "Warning: invalid GraphQL response for ${ORG}/${repo}" >&2
+    echo "— — — —"
+    return
+  fi
+  echo "${open_issues} ${total_issues} ${open_prs} ${total_prs}"
 }
 
 # ---------------------------------------------------------------------------
@@ -163,11 +188,9 @@ build_table() {
     [ -z "${badges}" ] && badges="—"
 
     # ---- Issue and PR counts ------------------------------------------------
-    local open_issues total_issues open_prs total_prs
-    open_issues=$(search_count "${name}" "issue" "open")
-    total_issues=$(search_count "${name}" "issue" "")
-    open_prs=$(search_count "${name}" "pr" "open")
-    total_prs=$(search_count "${name}" "pr" "")
+    local counts open_issues total_issues open_prs total_prs
+    counts=$(get_counts "${name}")
+    read -r open_issues total_issues open_prs total_prs <<< "${counts}"
     local issues_col="${open_issues} / ${total_issues}"
     local prs_col="${open_prs} / ${total_prs}"
 
