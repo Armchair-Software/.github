@@ -39,6 +39,7 @@ jobs:
           # Do not use a broad classic PAT with `repo` scope.
           # Fall back to GITHUB_TOKEN for public-only access.
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
+          INCLUDE_PRIVATE: "1"
         run: bash scripts/update-profile.sh
 
       - name: Commit updated README
