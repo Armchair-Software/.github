@@ -203,8 +203,18 @@ build_table() {
     local counts open_issues total_issues open_prs total_prs
     counts=$(get_counts "${name}")
     read -r open_issues total_issues open_prs total_prs <<< "${counts}"
-    local issues_col="${open_issues} / ${total_issues}"
-    local prs_col="${open_prs} / ${total_prs}"
+    local base_url="https://github.com/${ORG}/${name}"
+    local issues_col prs_col
+    if [ "${open_issues}" = "—" ]; then
+      issues_col="— / —"
+    else
+      issues_col="[${open_issues}](${base_url}/issues?q=is%3Aissue+is%3Aopen) / [${total_issues}](${base_url}/issues?q=is%3Aissue)"
+    fi
+    if [ "${open_prs}" = "—" ]; then
+      prs_col="— / —"
+    else
+      prs_col="[${open_prs}](${base_url}/pulls?q=is%3Apr+is%3Aopen) / [${total_prs}](${base_url}/pulls?q=is%3Apr)"
+    fi
 
     # ---- GitHub Pages -------------------------------------------------------
     local pages_col="—"
@@ -217,8 +227,10 @@ build_table() {
     fi
 
     # ---- Assemble row -------------------------------------------------------
-    local project_link="[**\`${name}\`**](https://github.com/${ORG}/${name})"
-    table+="| ${project_link} | ${desc_col} | ${badges} | ${issues_col} | ${prs_col} | ${stars} | ${forks} | ${pages_col} |\n"
+    local project_link="[**\`${name}\`**](${base_url})"
+    local stars_col="[${stars}](${base_url}/stargazers)"
+    local forks_col="[${forks}](${base_url}/network/members)"
+    table+="| ${project_link} | ${desc_col} | ${badges} | ${issues_col} | ${prs_col} | ${stars_col} | ${forks_col} | ${pages_col} |\n"
   done
 
   printf '%b' "${table}"
