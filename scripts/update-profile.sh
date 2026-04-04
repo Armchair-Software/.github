@@ -177,7 +177,7 @@ build_table() {
       local pages_url
       pages_url=$(get_pages_url "${name}")
       if [ -n "${pages_url}" ]; then
-        pages_col="[🌐](${pages_url})"
+        pages_col="[Pages](${pages_url})"
       fi
     fi
 
