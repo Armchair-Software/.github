@@ -41,11 +41,14 @@ gh_api() {
 
 gh_graphql() {
   local query="$1"
+  local variables="${2:-{\}}"
+  local payload
+  payload=$(jq -n --arg q "${query}" --argjson v "${variables}" '{"query": $q, "variables": $v}')
   curl -fsSL \
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
     -H "Content-Type: application/json" \
     "${API}/graphql" \
-    --data-raw "$(jq -n --arg q "${query}" '{"query": $q}')"
+    --data "${payload}"
 }
 
 # Fetch non-archived, non-fork repositories for the org.
@@ -101,10 +104,19 @@ get_pages_url() {
 # rate limits.  On failure each field falls back to "—".
 get_counts() {
   local repo="$1"
-  local query
-  query=$(printf '{ repository(owner: "%s", name: "%s") { openIssues: issues(states: OPEN) { totalCount } allIssues: issues(states: [OPEN, CLOSED]) { totalCount } openPRs: pullRequests(states: OPEN) { totalCount } allPRs: pullRequests(states: [OPEN, CLOSED, MERGED]) { totalCount } } }' "${ORG}" "${repo}")
+  # Use parameterised query to avoid any injection from org/repo name values.
+  local query='query($owner: String!, $name: String!) {
+    repository(owner: $owner, name: $name) {
+      openIssues: issues(states: OPEN) { totalCount }
+      allIssues: issues(states: [OPEN, CLOSED]) { totalCount }
+      openPRs: pullRequests(states: OPEN) { totalCount }
+      allPRs: pullRequests(states: [OPEN, CLOSED, MERGED]) { totalCount }
+    }
+  }'
+  local variables
+  variables=$(jq -n --arg owner "${ORG}" --arg name "${repo}" '{"owner": $owner, "name": $name}')
   local result
-  if ! result=$(gh_graphql "${query}" 2>/dev/null); then
+  if ! result=$(gh_graphql "${query}" "${variables}" 2>/dev/null); then
     echo "Warning: failed to fetch counts for ${ORG}/${repo}" >&2
     echo "— — — —"
     return
