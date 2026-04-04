@@ -80,9 +80,9 @@ jobs:
         env:
           TABLE: ${{ steps.table.outputs.table }}
         with:
-          # Explicitly use the auto-generated GITHUB_TOKEN so this step is
-          # never accidentally influenced by the PROFILE_METADATA_READ_TOKEN
-          # set as an env override in the earlier "Generate README preview" step.
+          # Explicitly use the default workflow token for PR comments.
+          # The earlier step's GITHUB_TOKEN env override is scoped to that
+          # step only and does not carry over here.
           github-token: ${{ github.token }}
           script: |
             const marker = '<!-- profile-readme-preview -->';
