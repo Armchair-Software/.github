@@ -61,8 +61,10 @@ gh_api() {
 gh_graphql() {
   local query="$1"
   local variables="${2:-{}}"
-  # Use GRAPHQL_TOKEN when available so that GraphQL queries (issues, PRs) are
-  # not blocked by a PAT that was granted only metadata/repo-listing access.
+  # Use GRAPHQL_TOKEN when available so that GraphQL queries (issues, PRs) use
+  # a token with org-level repository access. When INCLUDE_PRIVATE is set the
+  # same PAT that lists private repos is the right choice; github.token is only
+  # suitable for public-only setups where it has no private-repo access.
   local token="${GRAPHQL_TOKEN:-${GITHUB_TOKEN}}"
   local payload
   payload=$(jq -n --arg q "${query}" --argjson v "${variables}" '{"query": $q, "variables": $v}')
