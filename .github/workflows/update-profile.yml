@@ -15,6 +15,8 @@ on:
 
 permissions:
   contents: write
+  actions: read
+  pages: read
 
 jobs:
   update-profile:

@@ -46,11 +46,11 @@ fetch_repos() {
   done
 }
 
-# Return the first workflow file name for a repo, or empty string
+# Return base64-encoded JSON objects for each workflow in a repo (path + name)
 get_workflows() {
   local repo="$1"
   gh_api "repos/${ORG}/${repo}/actions/workflows?per_page=${PER_PAGE}" 2>/dev/null \
-    | jq -r '.workflows[].path' 2>/dev/null || true
+    | jq -r '.workflows[] | @base64' 2>/dev/null || true
 }
 
 # Return the html_url of the GitHub Pages site for a repo, or empty string
@@ -102,13 +102,17 @@ build_table() {
     local default_branch
     default_branch=$(echo "${repo_json}" | jq -r '.default_branch')
 
-    while IFS= read -r workflow_path; do
+    while IFS= read -r workflow_json_b64; do
+      [ -z "${workflow_json_b64}" ] && continue
+      local workflow_json workflow_path workflow_name workflow_file
+      workflow_json=$(printf '%s' "${workflow_json_b64}" | base64 --decode)
+      workflow_path=$(echo "${workflow_json}" | jq -r '.path // empty')
+      workflow_name=$(echo "${workflow_json}" | jq -r '.name // "CI"')
       [ -z "${workflow_path}" ] && continue
-      local workflow_file
       workflow_file=$(basename "${workflow_path}")
       local badge_url="https://github.com/${ORG}/${name}/actions/workflows/${workflow_file}/badge.svg?branch=${default_branch}"
       local workflow_url="https://github.com/${ORG}/${name}/actions/workflows/${workflow_file}"
-      badges+="[![CI](${badge_url})](${workflow_url}) "
+      badges+="[![${workflow_name}](${badge_url})](${workflow_url}) "
     done < <(get_workflows "${name}")
 
     badges="${badges% }"  # trim trailing space
@@ -124,8 +128,11 @@ build_table() {
       fi
     fi
 
-    # ---- Description --------------------------------------------------------
-    local desc_col="${description:-—}"
+    # ---- Description (sanitized for Markdown table) -------------------------
+    # Replace newlines with spaces and escape pipe characters
+    local desc_col
+    desc_col=$(printf '%s' "${description}" | tr '\n\r' '  ' | sed 's/|/\\|/g')
+    [ -z "${desc_col}" ] && desc_col="—"
 
     # ---- Assemble row -------------------------------------------------------
     local project_link="[**\`${name}\`**](https://github.com/${ORG}/${name})"
@@ -141,12 +148,19 @@ build_table() {
 
 update_readme() {
   local table="$1"
+  local table_file
+  table_file=$(mktemp)
+  chmod 600 "${table_file}"
+  printf '%s' "${table}" > "${table_file}"
 
-  python3 - "${README}" "${table}" << 'PYEOF'
+  python3 - "${README}" "${table_file}" << 'PYEOF'
 import sys, re
 
 readme_path = sys.argv[1]
-table       = sys.argv[2]
+table_file  = sys.argv[2]
+
+with open(table_file, 'r') as f:
+    table = f.read()
 
 with open(readme_path, 'r') as f:
     content = f.read()
@@ -157,18 +171,29 @@ new_section = (
     + '<!-- PROJECTS-END -->'
 )
 
-updated = re.sub(
+updated, count = re.subn(
     r'<!-- PROJECTS-START -->.*?<!-- PROJECTS-END -->',
     new_section,
     content,
     flags=re.DOTALL,
 )
 
+if count == 0:
+    print(
+        f"ERROR: markers <!-- PROJECTS-START --> / <!-- PROJECTS-END --> not found in {readme_path}",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
 with open(readme_path, 'w') as f:
     f.write(updated)
 
 print(f"Updated {readme_path}")
 PYEOF
+
+  local py_exit=$?
+  rm -f "${table_file}"
+  return "${py_exit}"
 }
 
 # ---------------------------------------------------------------------------
