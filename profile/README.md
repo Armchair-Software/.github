@@ -1,7 +1,3 @@
-# Armchair Software
-
-## Projects
-
 <!-- PROJECTS-START -->
 | Project | Description | Build Status | Pages |
 | ------- | ----------- | :----------: | :---: |
@@ -24,7 +20,3 @@
 | [**`webgpu-demo2`**](https://github.com/Armchair-Software/webgpu-demo2) | A demo using WebGPU with Emscripten and ImGUI | [![CI build](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/ci-build.yml) [![Copilot code review](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/copilot-pull-request-reviewer/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/copilot-pull-request-reviewer) [![CodeQL](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/codeql/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/codeql) | [🌐 Live demo](https://armchair-software.github.io/webgpu-demo2/) |
 | [**`webgpu-shader-demo`**](https://github.com/Armchair-Software/webgpu-shader-demo) | A full-screen quad shader rendering demo in the browser, written in C++ using WebGPU with Emscripten and imgui. | [![CI build](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/ci-build.yml) [![Copilot coding agent](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/copilot/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/copilot) [![Dependabot Updates](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/dependabot-updates/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/dependabot-updates) | [🌐 Live demo](https://armchair-software.github.io/webgpu-shader-demo/) |
 <!-- PROJECTS-END -->
-
----
-
-<sub>Dashboard auto-updated by the [update-profile](../.github/workflows/update-profile.yml) workflow.</sub>
