@@ -153,7 +153,7 @@ get_counts() {
     local graphql_errors
     graphql_errors=$(echo "${result}" | jq -r '
       if ((.errors // []) | length) > 0 then [(.errors // [])[].message] | join("; ")
-      elif .data?.repository? == null then "repository is null (token may lack issues:read / pull_requests:read permissions)"
+      elif .data?.repository? == null then "repository is null (token may lack Issues (read) / Pull requests (read) permissions)"
       else "unexpected response structure"
       end' 2>/dev/null || echo "could not parse response")
     echo "Warning: GraphQL count fetch failed for ${ORG}/${repo}: ${graphql_errors}" >&2
