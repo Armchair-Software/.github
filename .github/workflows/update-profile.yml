@@ -39,10 +39,6 @@ jobs:
           # Do not use a broad classic PAT with `repo` scope.
           # Fall back to GITHUB_TOKEN for public-only access.
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          # Use the same PAT for GraphQL queries (issue/PR counts) so it has
-          # the necessary org-level repository access, especially for private
-          # repos. Falls back to github.token for public-only setups (no PAT).
-          GRAPHQL_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || github.token }}
           # Include private repositories when the dedicated metadata token is
           # configured. If no token with private-repo access is supplied the
           # GitHub API will only return public repositories regardless, so the

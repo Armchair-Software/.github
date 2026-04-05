@@ -61,15 +61,10 @@ gh_api() {
 gh_graphql() {
   local query="$1"
   local variables="${2:-{}}"
-  # Use GRAPHQL_TOKEN when available so that GraphQL queries (issues, PRs) use
-  # a token with org-level repository access. When INCLUDE_PRIVATE is set the
-  # same PAT that lists private repos is the right choice; github.token is only
-  # suitable for public-only setups where it has no private-repo access.
-  local token="${GRAPHQL_TOKEN:-${GITHUB_TOKEN}}"
   local payload
   payload=$(jq -n --arg q "${query}" --argjson v "${variables}" '{"query": $q, "variables": $v}')
   curl -fsSL \
-    -H "Authorization: Bearer ${token}" \
+    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
     -H "Content-Type: application/json" \
     "${API}/graphql" \
     --data "${payload}"
@@ -150,7 +145,9 @@ get_counts() {
       || ! total_issues=$(echo "${result}" | jq -er '.data.repository.allIssues.totalCount') \
       || ! open_prs=$(echo "${result}" | jq -er '.data.repository.openPRs.totalCount') \
       || ! total_prs=$(echo "${result}" | jq -er '.data.repository.allPRs.totalCount'); then
-    echo "Warning: invalid GraphQL response for ${ORG}/${repo}" >&2
+    local graphql_errors
+    graphql_errors=$(echo "${result}" | jq -r '[.errors[]?.message // empty] | join("; ")' 2>/dev/null || true)
+    echo "Warning: invalid GraphQL response for ${ORG}/${repo}${graphql_errors:+: ${graphql_errors}}" >&2
     echo "— — — —"
     return
   fi
