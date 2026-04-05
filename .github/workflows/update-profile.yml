@@ -43,12 +43,11 @@ jobs:
           # Do not use a broad classic PAT with `repo` scope.
           # Fall back to GITHUB_TOKEN for public-only access.
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          # Include private repositories only when both a dedicated metadata
-          # token is configured and an explicit opt-in repository/environment
-          # variable is enabled. Set INCLUDE_PRIVATE_REPOS to `true` to allow
-          # private repository metadata to be included; otherwise default to
-          # public repositories only.
-          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && vars.INCLUDE_PRIVATE_REPOS == 'true' && '1' || '0' }}
+          # Include private repositories when the dedicated metadata token is
+          # configured. Configuring PROFILE_METADATA_READ_TOKEN is the explicit
+          # opt-in: the token must be scoped to the org's private repos and the
+          # GitHub API will only return repos the token can access anyway.
+          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
         run: bash scripts/update-profile.sh
 
       - name: Commit updated README

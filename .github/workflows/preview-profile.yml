@@ -40,12 +40,11 @@ jobs:
           #   - Pull requests (read)        – for PR counts via GraphQL
           # Fall back to GITHUB_TOKEN for public-only access (no issue/PR counts).
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          # Include private repositories only when both of the following are true:
-          #   1. PROFILE_METADATA_READ_TOKEN is configured, and
-          #   2. the repository/workflow variable INCLUDE_PRIVATE_REPOS is set to 'true'.
-          # This prevents private repositories from being included solely because
-          # a configured token happens to have private-repository access.
-          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && vars.INCLUDE_PRIVATE_REPOS == 'true' && '1' || '0' }}
+          # Include private repositories when the dedicated metadata token is
+          # configured. Configuring PROFILE_METADATA_READ_TOKEN is the explicit
+          # opt-in: the token must be scoped to the org's private repos and the
+          # GitHub API will only return repos the token can access anyway.
+          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
         run: bash scripts/update-profile.sh
 
       - name: Write step summary and capture table
