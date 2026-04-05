@@ -23,16 +23,17 @@
 | [**`fractyr-redux`**](https://github.com/Armchair-Software/fractyr-redux) | *[Private]* |  |  |  |  |
 | [**`libvoxelstorm`**](https://github.com/Armchair-Software/libvoxelstorm) | *[Private]* |  |  |  |  |
 | [**`loginserver_lambda`**](https://github.com/Armchair-Software/loginserver_lambda) | *[Private]* |  |  |  |  |
-| [**`palette_editor`**](https://github.com/Armchair-Software/palette_editor) | *[Private]* |  |  |  |  |
-| [**`pngpp`**](https://github.com/Armchair-Software/pngpp) | LibPNG++ extended to support PNG metadata text comments |  |  |  |  |
+| [**`palette_editor`**](https://github.com/Armchair-Software/palette_editor) | *[Private]* | [![CI build](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml) |  |  |  |
+| [**`pngpp`**](https://github.com/Armchair-Software/pngpp) | LibPNG++ extended to support PNG metadata text comments | [![CI](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml) |  | [1](https://github.com/Armchair-Software/pngpp/pulls?q=is%3Apr+is%3Aopen) |  |
 | [**`progressstorm`**](https://github.com/Armchair-Software/progressstorm) | Tiny header-only commandline progress bar library |  |  |  |  |
 | [**`raindrop`**](https://github.com/Armchair-Software/raindrop) | *[Private]* | [![CI build](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml) |  |  |  |
+| [**`scripts`**](https://github.com/Armchair-Software/scripts) | *[Private]* |  |  |  |  |
 | [**`spinnerstorm`**](https://github.com/Armchair-Software/spinnerstorm) | Tiny header-only commandline spinner utility |  |  |  |  |
 | [**`style-guide`**](https://github.com/Armchair-Software/style-guide) | Style guide documentation for Armchair Software C++ projects | [![Deploy GitHub Pages](https://github.com/Armchair-Software/style-guide/actions/workflows/pages.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/style-guide/actions/workflows/pages.yml) |  |  | [Pages](https://armchair-software.github.io/style-guide/) |
 | [**`tacwing`**](https://github.com/Armchair-Software/tacwing) | *[Private]* |  |  |  |  |
 | [**`tacwing-simtest`**](https://github.com/Armchair-Software/tacwing-simtest) | *[Private]* |  |  |  |  |
 | [**`tacwing-web-cgi`**](https://github.com/Armchair-Software/tacwing-web-cgi) | *[Private]* |  |  |  |  |
-| [**`tar_to_stream`**](https://github.com/Armchair-Software/tar_to_stream) | C++ header-only library for creating TAR archives to arbitrary streams, packaging data from memory. |  |  |  |  |
+| [**`tar_to_stream`**](https://github.com/Armchair-Software/tar_to_stream) | C++ header-only library for creating TAR archives to arbitrary streams, packaging data from memory. | [![Coverage](https://github.com/Armchair-Software/tar_to_stream/actions/workflows/coverage.yml/badge.svg?branch=main)](https://github.com/Armchair-Software/tar_to_stream/actions/workflows/coverage.yml) [![Tests](https://github.com/Armchair-Software/tar_to_stream/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Armchair-Software/tar_to_stream/actions/workflows/tests.yml) |  | [1](https://github.com/Armchair-Software/tar_to_stream/pulls?q=is%3Apr+is%3Aopen) |  |
 | [**`trading_histogram`**](https://github.com/Armchair-Software/trading_histogram) | *[Private]* |  |  |  |  |
 | [**`vectorstorm`**](https://github.com/Armchair-Software/vectorstorm) | Vector mathematics for computer graphics - Armchair Software |  |  |  |  |
 | [**`webgpu-demo`**](https://github.com/Armchair-Software/webgpu-demo) | A demo using WebGPU with Emscripten | [![CI build](https://github.com/Armchair-Software/webgpu-demo/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-demo/actions/workflows/ci-build.yml) |  |  | [Pages](https://armchair-software.github.io/webgpu-demo/) |
