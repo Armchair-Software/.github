@@ -40,3 +40,5 @@
 | [**`webgpu-demo3`**](https://github.com/Armchair-Software/webgpu-demo3) | *[Private]* | [![CI build](https://github.com/Armchair-Software/webgpu-demo3/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-demo3/actions/workflows/ci-build.yml) |  |  |  |
 | [**`webgpu-shader-demo`**](https://github.com/Armchair-Software/webgpu-shader-demo) | A full-screen quad shader rendering demo in the browser, written in C++ using WebGPU with Emscripten and imgui. | [![CI build](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/ci-build.yml) |  |  | [Pages](https://armchair-software.github.io/webgpu-shader-demo/) |
 <!-- PROJECTS-END -->
+
+See also: the legacy VoxelStorm repositories at https://github.com/VoxelStorm-Ltd/
