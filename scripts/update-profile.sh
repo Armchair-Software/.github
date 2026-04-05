@@ -7,8 +7,13 @@
 #   GITHUB_TOKEN  – a read-only token for accessing the GitHub API.
 #                   For public-only access the default GITHUB_TOKEN is sufficient.
 #                   To include private repositories, supply a fine-grained
-#                   read-only PAT (or GitHub App installation token) via the
-#                   PROFILE_METADATA_READ_TOKEN secret (see update-profile.yml).
+#                   read-only PAT via PROFILE_METADATA_READ_TOKEN and set
+#                   INCLUDE_PRIVATE=1 (see update-profile.yml).
+#                   To show issue/PR counts (public or private repos), the
+#                   token must have these fine-grained permissions:
+#                     - Repository metadata (read) – list repos via REST
+#                     - Issues (read)              – issue counts via GraphQL
+#                     - Pull requests (read)       – PR counts via GraphQL
 #
 # Optional environment variables:
 #   ORG             – GitHub organisation name (default: Armchair-Software)
@@ -60,7 +65,7 @@ gh_api() {
 
 gh_graphql() {
   local query="$1"
-  local variables="${2:-{}}"
+  local variables="${2:-{\}}"
   local payload
   payload=$(jq -n --arg q "${query}" --argjson v "${variables}" '{"query": $q, "variables": $v}')
   curl -fsSL \
@@ -145,7 +150,13 @@ get_counts() {
       || ! total_issues=$(echo "${result}" | jq -er '.data.repository.allIssues.totalCount') \
       || ! open_prs=$(echo "${result}" | jq -er '.data.repository.openPRs.totalCount') \
       || ! total_prs=$(echo "${result}" | jq -er '.data.repository.allPRs.totalCount'); then
-    echo "Warning: invalid GraphQL response for ${ORG}/${repo}" >&2
+    local graphql_errors
+    graphql_errors=$(echo "${result}" | jq -r '
+      if ((.errors // []) | length) > 0 then [(.errors // [])[].message] | join("; ")
+      elif .data?.repository? == null then "repository is null (token may lack Issues (read) / Pull requests (read) permissions)"
+      else "unexpected response structure"
+      end' 2>/dev/null || echo "could not parse response")
+    echo "Warning: GraphQL count fetch failed for ${ORG}/${repo}: ${graphql_errors}" >&2
     echo "— — — —"
     return
   fi
@@ -161,8 +172,14 @@ build_table() {
   # Build header row dynamically based on enabled columns
   local header="| Project | Description | Build Status |"
   local sep="| ------- | ----------- | :----------: |"
-  [ -n "${SHOW_ISSUES}" ] && header+=" Issues |" && sep+=" :----: |"
-  [ -n "${SHOW_PRS}" ]    && header+=" PRs |"    && sep+=" :---: |"
+  if [ -n "${SHOW_ISSUES}" ]; then
+    if [ -n "${ISSUES_SIMPLIFIED}" ]; then header+=" Open Issues |"; else header+=" Issues |"; fi
+    sep+=" :----------: |"
+  fi
+  if [ -n "${SHOW_PRS}" ]; then
+    if [ -n "${ISSUES_SIMPLIFIED}" ]; then header+=" Open PRs |"; else header+=" PRs |"; fi
+    sep+=" :------: |"
+  fi
   [ -n "${SHOW_STARS}" ]  && header+=" Stars |"  && sep+=" :---: |"
   [ -n "${SHOW_FORKS}" ]  && header+=" Forks |"  && sep+=" :---: |"
   header+=" Pages |"

@@ -29,22 +29,25 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run update script
         env:
           # Provide a dedicated fine-grained read-only token (or GitHub App
           # installation token) limited to the specific repositories needed
           # by this workflow to list repositories and query their metadata.
+          # Required fine-grained PAT permissions:
+          #   - Repository metadata (read)  – for listing repos via REST
+          #   - Issues (read)               – for issue counts via GraphQL
+          #   - Pull requests (read)        – for PR counts via GraphQL
           # Do not use a broad classic PAT with `repo` scope.
           # Fall back to GITHUB_TOKEN for public-only access.
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          # Only include private repositories when the INCLUDE_PRIVATE_REPOS
-          # repository variable is explicitly set to '1' AND the dedicated
-          # metadata token is configured. This decouples token availability
-          # from private-repo inclusion to prevent accidentally publishing
-          # private repository names in a public profile README.
-          INCLUDE_PRIVATE: ${{ vars.INCLUDE_PRIVATE_REPOS == '1' && secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
+          # Include private repositories when the dedicated metadata token is
+          # configured. Configuring PROFILE_METADATA_READ_TOKEN is the explicit
+          # opt-in: the token must be scoped to the org's private repos and the
+          # GitHub API will only return repos the token can access anyway.
+          INCLUDE_PRIVATE: ${{ secrets.PROFILE_METADATA_READ_TOKEN != '' && '1' || '0' }}
         run: bash scripts/update-profile.sh
 
       - name: Commit updated README
