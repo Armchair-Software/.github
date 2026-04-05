@@ -36,6 +36,10 @@ jobs:
           # Provide a dedicated fine-grained read-only token (or GitHub App
           # installation token) limited to the specific repositories needed
           # by this workflow to list repositories and query their metadata.
+          # Required fine-grained PAT permissions:
+          #   - Repository metadata (read)  – for listing repos via REST
+          #   - Issues (read)               – for issue counts via GraphQL
+          #   - Pull requests (read)        – for PR counts via GraphQL
           # Do not use a broad classic PAT with `repo` scope.
           # Fall back to GITHUB_TOKEN for public-only access.
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}

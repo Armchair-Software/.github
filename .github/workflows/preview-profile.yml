@@ -32,6 +32,14 @@ jobs:
 
       - name: Generate README preview
         env:
+          # Provide a dedicated fine-grained read-only token (or GitHub App
+          # installation token) limited to the specific repositories needed
+          # by this workflow to list repositories and query their metadata.
+          # Required fine-grained PAT permissions:
+          #   - Repository metadata (read)  – for listing repos via REST
+          #   - Issues (read)               – for issue counts via GraphQL
+          #   - Pull requests (read)        – for PR counts via GraphQL
+          # Fall back to GITHUB_TOKEN for public-only access (no issue/PR counts).
           GITHUB_TOKEN: ${{ secrets.PROFILE_METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
           # Include private repositories when the dedicated metadata token is
           # configured. If no token with private-repo access is supplied the
