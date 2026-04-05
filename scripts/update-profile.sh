@@ -171,8 +171,14 @@ build_table() {
   # Build header row dynamically based on enabled columns
   local header="| Project | Description | Build Status |"
   local sep="| ------- | ----------- | :----------: |"
-  [ -n "${SHOW_ISSUES}" ] && header+=" Issues |" && sep+=" :----: |"
-  [ -n "${SHOW_PRS}" ]    && header+=" PRs |"    && sep+=" :---: |"
+  if [ -n "${SHOW_ISSUES}" ]; then
+    if [ -n "${ISSUES_SIMPLIFIED}" ]; then header+=" Open Issues |"; else header+=" Issues |"; fi
+    sep+=" :----------: |"
+  fi
+  if [ -n "${SHOW_PRS}" ]; then
+    if [ -n "${ISSUES_SIMPLIFIED}" ]; then header+=" Open PRs |"; else header+=" PRs |"; fi
+    sep+=" :------: |"
+  fi
   [ -n "${SHOW_STARS}" ]  && header+=" Stars |"  && sep+=" :---: |"
   [ -n "${SHOW_FORKS}" ]  && header+=" Forks |"  && sep+=" :---: |"
   header+=" Pages |"
