@@ -150,8 +150,12 @@ get_counts() {
       || ! open_prs=$(echo "${result}" | jq -er '.data.repository.openPRs.totalCount') \
       || ! total_prs=$(echo "${result}" | jq -er '.data.repository.allPRs.totalCount'); then
     local graphql_errors
-    graphql_errors=$(echo "${result}" | jq -r '[.errors[]?.message // empty] | join("; ")' 2>/dev/null || true)
-    echo "Warning: invalid GraphQL response for ${ORG}/${repo}${graphql_errors:+: ${graphql_errors}}" >&2
+    graphql_errors=$(echo "${result}" | jq -r '
+      if (.errors | length) > 0 then [.errors[].message] | join("; ")
+      elif .data.repository == null then "repository is null (token may lack issues:read / pull_requests:read permissions)"
+      else "unexpected response structure"
+      end' 2>/dev/null || echo "could not parse response")
+    echo "Warning: GraphQL count fetch failed for ${ORG}/${repo}: ${graphql_errors}" >&2
     echo "— — — —"
     return
   fi
