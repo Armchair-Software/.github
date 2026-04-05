@@ -1,8 +1,8 @@
 <!-- PROJECTS-START -->
 | Project | Description | Build Status | Open Issues | Open PRs | Pages |
 | ------- | ----------- | :----------: | :----------: | :------: | :---: |
-| [**`anchorhold`**](https://github.com/Armchair-Software/anchorhold) | *[Private]* | [![CI build](https://github.com/Armchair-Software/anchorhold/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/anchorhold/actions/workflows/ci-build.yml) |  | [1](https://github.com/Armchair-Software/anchorhold/pulls?q=is%3Apr+is%3Aopen) |  |
-| [**`annstorm`**](https://github.com/Armchair-Software/annstorm) | *[Private]* |  |  |  |  |
+| [**`anchorhold`**](https://github.com/Armchair-Software/anchorhold) | *[Private]* | [![CI build](https://github.com/Armchair-Software/anchorhold/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/anchorhold/actions/workflows/ci-build.yml) |  |  |  |
+| [**`annstorm`**](https://github.com/Armchair-Software/annstorm) | *[Private]* | [![CI](https://github.com/Armchair-Software/annstorm/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/annstorm/actions/workflows/ci.yml) |  | [1](https://github.com/Armchair-Software/annstorm/pulls?q=is%3Apr+is%3Aopen) |  |
 | [**`armchair-demos`**](https://github.com/Armchair-Software/armchair-demos) | *[Private]* |  |  |  |  |
 | [**`armchair-web`**](https://github.com/Armchair-Software/armchair-web) | *[Private]* |  |  |  |  |
 | [**`bigtort`**](https://github.com/Armchair-Software/bigtort) | *[Private]* | [![Build](https://github.com/Armchair-Software/bigtort/actions/workflows/cmake-single-platform.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/bigtort/actions/workflows/cmake-single-platform.yml) |  |  |  |
