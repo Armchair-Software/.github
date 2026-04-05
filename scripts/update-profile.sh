@@ -64,7 +64,7 @@ gh_api() {
 
 gh_graphql() {
   local query="$1"
-  local variables="${2:-{}}"
+  local variables="${2:-{\}}"
   local payload
   payload=$(jq -n --arg q "${query}" --argjson v "${variables}" '{"query": $q, "variables": $v}')
   curl -fsSL \
