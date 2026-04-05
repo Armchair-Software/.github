@@ -6,9 +6,13 @@
 # Required environment variables:
 #   GITHUB_TOKEN  – a read-only token for accessing the GitHub API.
 #                   For public-only access the default GITHUB_TOKEN is sufficient.
-#                   To include private repositories, supply a fine-grained
-#                   read-only PAT (or GitHub App installation token) via the
+#                   To include private repositories AND show issue/PR counts,
+#                   supply a fine-grained read-only PAT via the
 #                   PROFILE_METADATA_READ_TOKEN secret (see update-profile.yml).
+#                   The PAT needs these fine-grained permissions:
+#                     - Repository metadata (read) – list repos via REST
+#                     - Issues (read)              – issue counts via GraphQL
+#                     - Pull requests (read)       – PR counts via GraphQL
 #
 # Optional environment variables:
 #   ORG             – GitHub organisation name (default: Armchair-Software)
