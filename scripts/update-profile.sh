@@ -112,11 +112,11 @@ get_codecov_badge() {
   local badge_url="https://codecov.io/gh/${ORG}/${repo}/branch/${encoded_branch}/graph/badge.svg"
   local svg
   if ! svg=$(curl -fsSL --max-time 10 "${badge_url}" 2>/dev/null); then
-    return
+    return 0
   fi
   # If codecov has no data for this repo the SVG will contain the text "unknown"
   if echo "${svg}" | grep -qi "unknown"; then
-    return
+    return 0
   fi
   local codecov_url="https://codecov.io/gh/${ORG}/${repo}"
   echo "[![codecov](${badge_url})](${codecov_url})"
