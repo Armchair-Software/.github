@@ -21,7 +21,7 @@
 | [**`encrypted-chat-client`**](https://github.com/Armchair-Software/encrypted-chat-client) | *[Private]* | [![CI build](https://github.com/Armchair-Software/encrypted-chat-client/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/encrypted-chat-client/actions/workflows/ci-build.yml) |  |  |  |
 | [**`encrypted-chat-server`**](https://github.com/Armchair-Software/encrypted-chat-server) | *[Private]* |  |  |  |  |
 | [**`fractyr-redux`**](https://github.com/Armchair-Software/fractyr-redux) | *[Private]* |  |  |  |  |
-| [**`libvoxelstorm`**](https://github.com/Armchair-Software/libvoxelstorm) | *[Private]* |  |  |  |  |
+| [**`libvoxelstorm`**](https://github.com/Armchair-Software/libvoxelstorm) | *[Private]* | [![Auto Update](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml) |  |  |  |
 | [**`loginserver_lambda`**](https://github.com/Armchair-Software/loginserver_lambda) | *[Private]* |  |  |  |  |
 | [**`palette_editor`**](https://github.com/Armchair-Software/palette_editor) | *[Private]* | [![CI build](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml) |  |  |  |
 | [**`pngpp`**](https://github.com/Armchair-Software/pngpp) | LibPNG++ extended to support PNG metadata text comments | [![CI](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml) |  |  |  |
