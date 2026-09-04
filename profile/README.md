@@ -3,6 +3,7 @@
 | ------- | ----------- | :----------: | :----------: | :------: | :---: |
 | [**`anchorhold`**](https://github.com/Armchair-Software/anchorhold) | *[Private]* | [![CI build](https://github.com/Armchair-Software/anchorhold/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/anchorhold/actions/workflows/ci-build.yml) |  |  |  |
 | [**`annstorm`**](https://github.com/Armchair-Software/annstorm) | *[Private]* | [![CI](https://github.com/Armchair-Software/annstorm/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/annstorm/actions/workflows/ci.yml) |  |  |  |
+| [**`ansiart`**](https://github.com/Armchair-Software/ansiart) | *[Private]* |  |  |  |  |
 | [**`armchair-demos`**](https://github.com/Armchair-Software/armchair-demos) | *[Private]* |  |  |  |  |
 | [**`armchair-web`**](https://github.com/Armchair-Software/armchair-web) | *[Private]* |  |  |  |  |
 | [**`bigtort`**](https://github.com/Armchair-Software/bigtort) | *[Private]* | [![Build](https://github.com/Armchair-Software/bigtort/actions/workflows/cmake-single-platform.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/bigtort/actions/workflows/cmake-single-platform.yml) |  |  |  |
@@ -20,6 +21,7 @@
 | [**`emscripten-sync`**](https://github.com/Armchair-Software/emscripten-sync) | C++ Standard-library compatible synchronisation primitives, implemented for Emscripten WASM Workers |  |  |  |  |
 | [**`encrypted-chat-client`**](https://github.com/Armchair-Software/encrypted-chat-client) | *[Private]* | [![CI build](https://github.com/Armchair-Software/encrypted-chat-client/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/encrypted-chat-client/actions/workflows/ci-build.yml) |  |  |  |
 | [**`encrypted-chat-server`**](https://github.com/Armchair-Software/encrypted-chat-server) | *[Private]* |  |  |  |  |
+| [**`fonts`**](https://github.com/Armchair-Software/fonts) | *[Private]* |  |  |  |  |
 | [**`fractyr-redux`**](https://github.com/Armchair-Software/fractyr-redux) | *[Private]* |  |  |  |  |
 | [**`libvoxelstorm`**](https://github.com/Armchair-Software/libvoxelstorm) | *[Private]* | [![Auto Update](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml) |  |  |  |
 | [**`loginserver_lambda`**](https://github.com/Armchair-Software/loginserver_lambda) | *[Private]* |  |  |  |  |
@@ -28,6 +30,7 @@
 | [**`progressstorm`**](https://github.com/Armchair-Software/progressstorm) | Tiny header-only commandline progress bar library |  |  |  |  |
 | [**`raindrop`**](https://github.com/Armchair-Software/raindrop) | *[Private]* | [![CI build](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml) |  |  |  |
 | [**`scripts`**](https://github.com/Armchair-Software/scripts) | *[Private]* |  |  |  |  |
+| [**`smoke-demo`**](https://github.com/Armchair-Software/smoke-demo) | *[Private]* |  |  |  |  |
 | [**`spinnerstorm`**](https://github.com/Armchair-Software/spinnerstorm) | Tiny header-only commandline spinner utility |  |  |  |  |
 | [**`style-guide`**](https://github.com/Armchair-Software/style-guide) | Style guide documentation for Armchair Software C++ projects | [![Deploy GitHub Pages](https://github.com/Armchair-Software/style-guide/actions/workflows/pages.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/style-guide/actions/workflows/pages.yml) |  |  | [Pages](https://armchair-software.github.io/style-guide/) |
 | [**`tacwing`**](https://github.com/Armchair-Software/tacwing) | *[Private]* |  |  |  |  |
@@ -40,6 +43,7 @@
 | [**`webgpu-demo2`**](https://github.com/Armchair-Software/webgpu-demo2) | A demo using WebGPU with Emscripten and ImGUI | [![CI build](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-demo2/actions/workflows/ci-build.yml) |  |  | [Pages](https://armchair-software.github.io/webgpu-demo2/) |
 | [**`webgpu-demo3`**](https://github.com/Armchair-Software/webgpu-demo3) | *[Private]* | [![CI build](https://github.com/Armchair-Software/webgpu-demo3/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-demo3/actions/workflows/ci-build.yml) |  |  |  |
 | [**`webgpu-shader-demo`**](https://github.com/Armchair-Software/webgpu-shader-demo) | A full-screen quad shader rendering demo in the browser, written in C++ using WebGPU with Emscripten and imgui. | [![CI build](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/webgpu-shader-demo/actions/workflows/ci-build.yml) |  |  | [Pages](https://armchair-software.github.io/webgpu-shader-demo/) |
+| [**`world-demo`**](https://github.com/Armchair-Software/world-demo) | *[Private]* |  |  |  |  |
 <!-- PROJECTS-END -->
 
 See also: the legacy VoxelStorm repositories at https://github.com/VoxelStorm-Ltd/
