@@ -29,6 +29,7 @@
 | [**`pngpp`**](https://github.com/Armchair-Software/pngpp) | LibPNG++ extended to support PNG metadata text comments | [![CI](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml) |  |  |  |
 | [**`progressstorm`**](https://github.com/Armchair-Software/progressstorm) | Tiny header-only commandline progress bar library |  |  |  |  |
 | [**`raindrop`**](https://github.com/Armchair-Software/raindrop) | *[Private]* | [![CI build](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml) |  |  |  |
+| [**`rock-paper-scissors`**](https://github.com/Armchair-Software/rock-paper-scissors) | A C++ rock / paper / scissors game in the browser | [![CI build](https://github.com/Armchair-Software/rock-paper-scissors/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/rock-paper-scissors/actions/workflows/ci-build.yml) |  |  | [Pages](https://armchair-software.github.io/rock-paper-scissors/) |
 | [**`scripts`**](https://github.com/Armchair-Software/scripts) | *[Private]* |  |  |  |  |
 | [**`smoke-demo`**](https://github.com/Armchair-Software/smoke-demo) | *[Private]* |  |  |  |  |
 | [**`spinnerstorm`**](https://github.com/Armchair-Software/spinnerstorm) | Tiny header-only commandline spinner utility |  |  |  |  |
