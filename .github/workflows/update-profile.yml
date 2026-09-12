@@ -54,11 +54,17 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Generated content replaces the whole README, never merges with an older run.
+          generated_readme=$(mktemp)
+          trap 'rm -f "$generated_readme"' EXIT
+          cp profile/README.md "$generated_readme"
+          git restore -- profile/README.md
+          git pull --ff-only origin master
+          cp "$generated_readme" profile/README.md
           git add profile/README.md
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
             git commit -m "chore: auto-update profile README [skip ci]"
-            git pull --rebase origin master
             git push
           fi
