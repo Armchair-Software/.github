@@ -6,6 +6,7 @@
 | [**`ansiart`**](https://github.com/Armchair-Software/ansiart) | *[Private]* |  |  |  |  |
 | [**`armchair-demos`**](https://github.com/Armchair-Software/armchair-demos) | *[Private]* | [![Build Linux](https://github.com/Armchair-Software/armchair-demos/actions/workflows/build-linux.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/armchair-demos/actions/workflows/build-linux.yml) |  |  |  |
 | [**`armchair-web`**](https://github.com/Armchair-Software/armchair-web) | *[Private]* |  |  |  |  |
+| [**`asm-dom-internal`**](https://github.com/Armchair-Software/asm-dom-internal) | *[Private]* |  |  |  |  |
 | [**`asm-dom-minimal`**](https://github.com/Armchair-Software/asm-dom-minimal) | *[Private]* |  |  |  |  |
 | [**`bigtort`**](https://github.com/Armchair-Software/bigtort) | *[Private]* | [![Build](https://github.com/Armchair-Software/bigtort/actions/workflows/cmake-single-platform.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/bigtort/actions/workflows/cmake-single-platform.yml) |  |  |  |
 | [**`boids-demo`**](https://github.com/Armchair-Software/boids-demo) | *[Private]* |  |  |  |  |
@@ -27,6 +28,7 @@
 | [**`libvoxelstorm`**](https://github.com/Armchair-Software/libvoxelstorm) | *[Private]* | [![Auto Update](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml) |  |  |  |
 | [**`loginserver_lambda`**](https://github.com/Armchair-Software/loginserver_lambda) | *[Private]* |  |  |  |  |
 | [**`palette_editor`**](https://github.com/Armchair-Software/palette_editor) | *[Private]* | [![CI build](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml) |  |  |  |
+| [**`pillbox`**](https://github.com/Armchair-Software/pillbox) | *[Private]* | [![Tests](https://github.com/Armchair-Software/pillbox/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/pillbox/actions/workflows/tests.yml) |  |  |  |
 | [**`pngpp`**](https://github.com/Armchair-Software/pngpp) | LibPNG++ extended to support PNG metadata text comments | [![CI](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/pngpp/actions/workflows/ci.yml) |  |  |  |
 | [**`progressstorm`**](https://github.com/Armchair-Software/progressstorm) | Tiny header-only commandline progress bar library |  |  |  |  |
 | [**`raindrop`**](https://github.com/Armchair-Software/raindrop) | *[Private]* | [![CI build](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/raindrop/actions/workflows/ci-build.yml) |  |  |  |
