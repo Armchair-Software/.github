@@ -25,7 +25,7 @@
 | [**`encrypted-chat-server`**](https://github.com/Armchair-Software/encrypted-chat-server) | *[Private]* |  |  |  |  |
 | [**`fonts`**](https://github.com/Armchair-Software/fonts) | *[Private]* |  |  |  |  |
 | [**`fractyr-redux`**](https://github.com/Armchair-Software/fractyr-redux) | *[Private]* |  |  |  |  |
-| [**`libvoxelstorm`**](https://github.com/Armchair-Software/libvoxelstorm) | *[Private]* | [![Auto Update](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml) |  |  |  |
+| [**`libvoxelstorm`**](https://github.com/Armchair-Software/libvoxelstorm) | *[Private]* | [![Auto Update](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/libvoxelstorm/actions/workflows/sync_back_from_repos.yml) |  | [4](https://github.com/Armchair-Software/libvoxelstorm/pulls?q=is%3Apr+is%3Aopen) |  |
 | [**`loginserver_lambda`**](https://github.com/Armchair-Software/loginserver_lambda) | *[Private]* |  |  |  |  |
 | [**`palette_editor`**](https://github.com/Armchair-Software/palette_editor) | *[Private]* | [![CI build](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/palette_editor/actions/workflows/ci-build.yml) |  |  |  |
 | [**`pillbox`**](https://github.com/Armchair-Software/pillbox) | *[Private]* | [![Tests](https://github.com/Armchair-Software/pillbox/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Armchair-Software/pillbox/actions/workflows/tests.yml) |  |  |  |
